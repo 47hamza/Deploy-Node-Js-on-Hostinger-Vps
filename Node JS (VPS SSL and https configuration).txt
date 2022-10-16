@@ -1,0 +1,31 @@
+const express = require('express');
+const server = express();
+const winston = require('winston');
+const https =require('https');
+const path = require('path');
+const fs =require('fs');
+
+const sslserver= https.createServer({
+//   key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
+//   cert:fs.readFileSync(path.join(__dirname,'cert','cert.crt'))
+    key:fs.readFileSync(path.join('/etc/letsencrypt/live/server.poptiles.art/privkey.pem')),
+   cert:fs.readFileSync(path.join('/etc/letsencrypt/live/server.poptiles.art/fullchain.pem'))
+},
+server
+)
+
+
+require('dotenv').config();
+require('./connection/db_connection');
+require('./start/logging')();
+require('./start/route')(server);
+
+
+
+
+
+sslserver.listen(process.env.PORT || 8443, () => winston.info(`Server is working on http://localhost:${process.env.PORT}`));
+
+
+
+
